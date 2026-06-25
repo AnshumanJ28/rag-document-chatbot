@@ -8,7 +8,7 @@ A production-style Retrieval-Augmented Generation (RAG) pipeline built in Google
 
 ## Demo
 
-![Gradio UI](assets/demo_screenshot.png)
+![Gradio UI](<Screenshot 2026-06-26 022611.png>).
 
 > *Left: conversational interface. Right: live source citations with rerank scores per query.*
 
@@ -93,13 +93,13 @@ Gradio UI
 ```
 rag-document-chatbot/
 ├── notebook/
-│   └── rag_chatbot.ipynb       # full pipeline, run top to bottom
+│   └── rag_chatbot.ipynb       
 ├── results/
-│   └── mlflow_runs.csv         # logged metrics from all test queries
+│   └── mlflow_runs.csv         
 ├── sample_data/
-│   └── sample_rag_test.pdf     # sample PDF used for testing
-├── assets/
-│   └── demo_screenshot.png     # Gradio UI screenshot
+│   └── sample_rag_test.pdf     
+├── demo_screenshot.png 
+│       
 ├── requirements.txt
 └── README.md
 ```
@@ -156,11 +156,11 @@ All key hyperparameters live in `RAGConfig` (Cell 2) — swap without touching t
 ```python
 @dataclass
 class RAGConfig:
-    chunk_size: int        = 512    # try 256 or 1024
-    chunk_overlap: int     = 64     # try 128 for denser overlap
-    top_k_retrieval: int   = 10     # candidates fetched by MMR
-    top_k_rerank: int      = 4      # final chunks passed to LLM
-    llm_model: str         = "llama-3.1-8b-instant"   # or mixtral-8x7b-32768
+    chunk_size: int        = 512    
+    chunk_overlap: int     = 64    
+    top_k_retrieval: int   = 10     
+    top_k_rerank: int      = 4      
+    llm_model: str         = "llama-3.1-8b-instant"  
     temperature: float     = 0.2
 ```
 
