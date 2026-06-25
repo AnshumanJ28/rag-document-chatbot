@@ -1,0 +1,16 @@
+question,latency_seconds,top_rerank_score,mean_rerank_score,answer_length,llm_model,chunk_size
+What is the capital of Japan?,0.5897,-11.0624,-11.187,73.0,llama-3.1-8b-instant,512
+How does chunking strategy affect retrieval quality?,0.6393,7.2078,0.3663,354.0,llama-3.1-8b-instant,512
+What is MMR and why is it used in retrieval?,0.6878,-1.0971,-5.1261,254.0,llama-3.1-8b-instant,512
+What is MMR and why is it used in retrieval?,0.6905,-1.0971,-5.1261,275.0,llama-3.1-8b-instant,512
+How does chunking strategy affect retrieval quality?,0.761,7.2078,0.3663,409.0,llama-3.1-8b-instant,512
+What evaluation metrics are used for RAG systems?,0.7635,7.8478,-1.3601,179.0,llama-3.1-8b-instant,512
+What is the capital of Japan?,0.7674,-11.0624,-11.187,73.0,llama-3.1-8b-instant,512
+Explain the difference between FAISS index types.,0.7683,-1.6806,-6.9838,301.0,llama-3.1-8b-instant,512
+What evaluation metrics are used for RAG systems?,0.8093,7.8478,-1.3601,183.0,llama-3.1-8b-instant,512
+How does chunking strategy affect retrieval quality?,0.8578,7.2078,0.3663,362.0,llama-3.1-8b-instant,512
+Explain the difference between FAISS index types.,0.9402,-1.6806,-6.9838,249.0,llama-3.1-8b-instant,512
+What evaluation metrics are used for RAG systems?,1.1836,7.8478,-1.3601,148.0,llama-3.1-8b-instant,512
+What is MMR and why is it used in retrieval?,1.5051,-1.0971,-5.1261,250.0,llama-3.1-8b-instant,512
+Explain the difference between FAISS index types.,5.9006,-1.6806,-6.9838,274.0,llama-3.1-8b-instant,512
+What is the capital of Japan?,14.6509,-11.0624,-11.187,73.0,llama-3.1-8b-instant,512

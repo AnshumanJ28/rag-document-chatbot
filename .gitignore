@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+*.db
+vector_store/
+uploaded_pdfs/
+/tmp/
+*.ipynb_checkpoints

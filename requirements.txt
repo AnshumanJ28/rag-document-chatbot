@@ -1,0 +1,15 @@
+pymupdf
+langchain
+langchain-community
+langchain-groq
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+gradio
+mlflow
+bitsandbytes
+accelerate
+transformers
+rank_bm25
+reportlab
+pandas
