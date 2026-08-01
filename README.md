@@ -1,14 +1,43 @@
-# RAG Document Intelligence Chatbot
+# 🔍 RAG Document Intelligence Chatbot
 
-A production-style Retrieval-Augmented Generation (RAG) pipeline built in Google Colab. Upload any PDF and ask questions — the system retrieves the most relevant chunks using MMR + cross-encoder re-ranking, then generates grounded answers using Groq's Llama 3.1. All queries are tracked with MLflow.
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![LangChain](https://img.shields.io/badge/LangChain-orchestration-1C3C3C)
+![FAISS](https://img.shields.io/badge/FAISS-vector%20store-00A67E)
+![Groq](https://img.shields.io/badge/Groq-Llama%203.1-F55036)
+![MLflow](https://img.shields.io/badge/MLflow-tracking-0194E2)
+![License](https://img.shields.io/badge/license-MIT-green)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AnshumanJ28/rag-document-chatbot/blob/main/notebook/rag_chatbot.ipynb)
 
-> Built as part of an ML Engineering portfolio. Focuses on retrieval quality, hallucination prevention, and experiment tracking — not just "plug in an LLM and call it a day."
+A production-style Retrieval-Augmented Generation (RAG) pipeline built in
+Google Colab. Upload any PDF and ask questions — the system retrieves the
+most relevant chunks using MMR + cross-encoder re-ranking, then generates
+grounded answers using Groq's Llama 3.1. All queries are tracked with
+MLflow.
+
+> Built as part of an ML Engineering portfolio. Focuses on retrieval
+> quality, hallucination prevention, and experiment tracking — not just
+> "plug in an LLM and call it a day."
+
+---
+
+## Table of Contents
+
+- [Demo](#demo)
+- [Results](#results)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Repo Structure](#repo-structure)
+- [Quickstart](#quickstart)
+- [Pipeline Design Decisions](#pipeline-design-decisions)
+- [Configuration](#configuration)
+- [Limitations & Future Work](#limitations--future-work)
+- [Author](#author)
 
 ---
 
 ## Demo
 
-![Gradio UI](<Screenshot 2026-06-26 022611.png>).
+![Gradio UI](<Screenshot 2026-06-26 022611.png>)
 
 > *Left: conversational interface. Right: live source citations with rerank scores per query.*
 
@@ -26,7 +55,10 @@ All 5 test queries logged via MLflow:
 | Explain the difference between FAISS index types? | 0.77s | -1.68 | 301 chars |
 | What evaluation metrics are used for RAG systems? | 0.81s | 7.85 | 183 chars |
 
-**Key observation:** The Japan question (not in the document) returns a top rerank score of -11 and correctly triggers the hallucination guard. On-topic questions score 7+ and receive accurate, cited answers. The re-ranker's score distribution is the signal — not just retrieval count.
+**Key observation:** The Japan question (not in the document) returns a
+top rerank score of -11 and correctly triggers the hallucination guard.
+On-topic questions score 7+ and receive accurate, cited answers. The
+re-ranker's score distribution is the signal — not just retrieval count.
 
 Full run logs: [`results/mlflow_runs.csv`](results/mlflow_runs.csv)
 
@@ -93,13 +125,12 @@ Gradio UI
 ```
 rag-document-chatbot/
 ├── notebook/
-│   └── rag_chatbot.ipynb       
+│   └── rag_chatbot.ipynb
 ├── results/
-│   └── mlflow_runs.csv         
+│   └── mlflow_runs.csv
 ├── sample_data/
-│   └── sample_rag_test.pdf     
-├── demo_screenshot.png 
-│       
+│   └── sample_rag_test.pdf
+├── demo_screenshot.png
 ├── requirements.txt
 └── README.md
 ```
@@ -115,7 +146,7 @@ cd rag-document-chatbot
 ```
 
 ### 2. Open in Colab
-Click the badge or upload `notebook/rag_chatbot.ipynb` to [colab.research.google.com](https://colab.research.google.com).
+Click the badge above, or upload `notebook/rag_chatbot.ipynb` to [colab.research.google.com](https://colab.research.google.com).
 
 ### 3. Add secrets
 In Colab, click the key icon (left sidebar) and add:
@@ -136,31 +167,47 @@ In Colab, click the key icon (left sidebar) and add:
 ## Pipeline Design Decisions
 
 **Why MMR before re-ranking?**
-Pure similarity search returns redundant chunks — all saying the same thing from nearby pages. MMR enforces diversity at fetch time (top 10), then cross-encoder re-ranking re-scores those 10 diverse candidates for precision, keeping the best 4. Two-stage retrieval: diversity first, precision second.
+Pure similarity search returns redundant chunks — all saying the same
+thing from nearby pages. MMR enforces diversity at fetch time (top 10),
+then cross-encoder re-ranking re-scores those 10 diverse candidates for
+precision, keeping the best 4. Two-stage retrieval: diversity first,
+precision second.
 
 **Why cross-encoder re-ranking?**
-Bi-encoders (used for embedding + FAISS search) encode query and document independently — fast but less accurate for ranking. Cross-encoders take the query-document pair as joint input, giving finer-grained relevance scores. Too slow for first-stage retrieval over thousands of chunks, ideal for re-ranking a small candidate set.
+Bi-encoders (used for embedding + FAISS search) encode query and document
+independently — fast but less accurate for ranking. Cross-encoders take
+the query-document pair as joint input, giving finer-grained relevance
+scores. Too slow for first-stage retrieval over thousands of chunks,
+ideal for re-ranking a small candidate set.
 
 **Why the hallucination guard matters?**
-The prompt explicitly instructs the LLM to answer only from the provided context. The Japan question (not in the PDF) returns a rerank score of -11 across all chunks — signalling nothing relevant was retrieved — and the model correctly refuses to answer. The rerank score is a proxy for "should I trust this answer."
+The prompt explicitly instructs the LLM to answer only from the provided
+context. The Japan question (not in the PDF) returns a rerank score of
+-11 across all chunks — signalling nothing relevant was retrieved — and
+the model correctly refuses to answer. The rerank score is a proxy for
+"should I trust this answer."
 
 **Why MLflow?**
-Latency and rerank scores vary per query and per config. MLflow makes it easy to compare chunk sizes, top-k values, or LLM models across runs without manually tracking results — the same pattern used in production ML systems.
+Latency and rerank scores vary per query and per config. MLflow makes it
+easy to compare chunk sizes, top-k values, or LLM models across runs
+without manually tracking results — the same pattern used in production
+ML systems.
 
 ---
 
 ## Configuration
 
-All key hyperparameters live in `RAGConfig` (Cell 2) — swap without touching the pipeline:
+All key hyperparameters live in `RAGConfig` (Cell 2) — swap without
+touching the pipeline:
 
 ```python
 @dataclass
 class RAGConfig:
-    chunk_size: int        = 512    
-    chunk_overlap: int     = 64    
-    top_k_retrieval: int   = 10     
-    top_k_rerank: int      = 4      
-    llm_model: str         = "llama-3.1-8b-instant"  
+    chunk_size: int        = 512
+    chunk_overlap: int     = 64
+    top_k_retrieval: int   = 10
+    top_k_rerank: int      = 4
+    llm_model: str         = "llama-3.1-8b-instant"
     temperature: float     = 0.2
 ```
 
@@ -168,10 +215,10 @@ class RAGConfig:
 
 ## Limitations & Future Work
 
-- **No memory across turns** — each query is independent; adding conversational memory (LangChain `ConversationBufferMemory`) would enable follow-up questions
-- **Single PDF at a time** — the vector store can hold multiple PDFs but the UI currently re-builds per session; adding persistent storage (e.g. Pinecone) would fix this
-- **Free-tier latency** — Groq free tier is fast but rate-limited; swap to a local Ollama model for unlimited offline inference
-- **No RAGAS evaluation** — adding reference-based evaluation (faithfulness, answer relevancy) would make the MLflow dashboard more meaningful
+- [ ] **No memory across turns** — each query is independent; adding conversational memory (LangChain `ConversationBufferMemory`) would enable follow-up questions
+- [ ] **Single PDF at a time** — the vector store can hold multiple PDFs but the UI currently re-builds per session; adding persistent storage (e.g. Pinecone) would fix this
+- [ ] **Free-tier latency** — Groq free tier is fast but rate-limited; swap to a local Ollama model for unlimited offline inference
+- [ ] **No RAGAS evaluation** — adding reference-based evaluation (faithfulness, answer relevancy) would make the MLflow dashboard more meaningful
 
 ---
 
@@ -180,3 +227,7 @@ class RAGConfig:
 **Anshuman Pandey**
 B.Tech CSE (AI/ML) — VIT Bhopal
 [GitHub](https://github.com/AnshumanJ28) · [LinkedIn](https://linkedin.com/in/anshuman-pandey)
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
